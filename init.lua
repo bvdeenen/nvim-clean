@@ -323,6 +323,7 @@ require("lazy").setup({
 vim.lsp.enable("gopls")
 vim.lsp.enable("pyright")
 vim.lsp.enable("rust_analyzer")
+vim.lsp.enable("bashls")
 
 vim.opt.smartindent = false
 vim.api.nvim_create_autocmd("FileType", {
