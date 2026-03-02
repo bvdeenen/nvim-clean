@@ -258,11 +258,6 @@ require("lazy").setup({
 			indent = { enable = true },
 		},
 		{
-			"mrcjkb/rustaceanvim",
-			version = "^6", -- Recommended
-			lazy = false, -- This plugin is already lazy
-		},
-		{
 			"nvim-telescope/telescope.nvim",
 			tag = "v0.2.0",
 			dependencies = { "nvim-lua/plenary.nvim" },
@@ -305,7 +300,6 @@ require("lazy").setup({
 			"stevearc/conform.nvim",
 			opts = {
 				formatters_by_ft = {
-					rust = { "rustfmt" },
 					python = { "black" },
 					javascript = { "prettier" },
 					typescript = { "prettier" },
@@ -322,8 +316,8 @@ require("lazy").setup({
 })
 vim.lsp.enable("gopls")
 vim.lsp.enable("pyright")
-vim.lsp.enable("rust_analyzer")
 vim.lsp.enable("bashls")
+vim.lsp.enable("stylua")
 
 vim.opt.smartindent = false
 vim.api.nvim_create_autocmd("FileType", {
