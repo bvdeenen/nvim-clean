@@ -57,7 +57,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- vim.pack.add() clones the plugin on first run and registers it in the packpath.
 -- After all declarations, packloadall makes them available for require().
 
-local gh = function(x) return "https://github.com/" .. x end
+local gh = function(x)
+	return "https://github.com/" .. x
+end
 
 vim.pack.add({
 	-- Dependencies
@@ -72,7 +74,6 @@ vim.pack.add({
 	gh("saadparwaiz1/cmp_luasnip"),
 	-- Plugins
 	gh("kylechui/nvim-surround"),
-	gh("neovim/nvim-lspconfig"),
 	gh("tpope/vim-fugitive"),
 	gh("stevearc/aerial.nvim"),
 	gh("nvim-neo-tree/neo-tree.nvim"),
@@ -102,10 +103,18 @@ local function tmux_navigate(direction)
 	end
 end
 
-vim.keymap.set("n", "<c-h>", function() tmux_navigate("h") end)
-vim.keymap.set("n", "<c-j>", function() tmux_navigate("j") end)
-vim.keymap.set("n", "<c-k>", function() tmux_navigate("k") end)
-vim.keymap.set("n", "<c-l>", function() tmux_navigate("l") end)
+vim.keymap.set("n", "<c-h>", function()
+	tmux_navigate("h")
+end)
+vim.keymap.set("n", "<c-j>", function()
+	tmux_navigate("j")
+end)
+vim.keymap.set("n", "<c-k>", function()
+	tmux_navigate("k")
+end)
+vim.keymap.set("n", "<c-l>", function()
+	tmux_navigate("l")
+end)
 
 require("aerial").setup({})
 
@@ -164,6 +173,25 @@ require("conform").setup({
 })
 
 -- [[ LSP ]]
+vim.lsp.config("gopls", {
+	cmd = { "gopls" },
+	filetypes = { "go", "gomod", "gowork", "gotmpl" },
+	root_markers = { "go.mod", "go.work", ".git" },
+	settings = {
+		gopls = {
+			hints = {
+				assignVariableTypes = true,
+				compositeLiteralFields = true,
+				compositeLiteralTypes = true,
+				constantValues = true,
+				functionTypeParameters = true,
+				parameterNames = true,
+				rangeVariableTypes = true,
+			},
+		},
+	},
+})
+
 vim.lsp.enable("gopls")
 vim.lsp.enable("pyright")
 vim.lsp.enable("bashls")
@@ -173,6 +201,12 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "rs", "gopls", "lua" },
 	callback = function()
 		vim.treesitter.start()
+	end,
+})
+
+vim.api.nvim_create_autocmd("LspAttach", {
+	callback = function(args)
+		vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
 	end,
 })
 
@@ -186,3 +220,8 @@ vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Telescope buffers" 
 vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Telescope help tags" })
 vim.keymap.set("n", "<leader>fC", builtin.commands, { desc = "Telescope commands" })
 vim.keymap.set("n", "<leader>fm", builtin.keymaps, { desc = "Telescope keymaps" })
+
+vim.keymap.set("n", "<leader>h", function()
+	local current = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
+	vim.lsp.inlay_hint.enable(not current, { bufnr = 0 })
+end, { desc = "Toggle inlay hints" })
