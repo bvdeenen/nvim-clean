@@ -84,6 +84,7 @@ vim.pack.add({
 	gh("nvim-telescope/telescope.nvim"),
 	gh("hrsh7th/nvim-cmp"),
 	gh("stevearc/conform.nvim"),
+	"https://codeberg.org/ziglang/zig.vim",
 })
 
 -- Ensure all start/ plugins are sourced before require() calls below.
@@ -192,10 +193,50 @@ vim.lsp.config("gopls", {
 	},
 })
 
+-- don't show parse errors in a separate window
+vim.g.zig_fmt_parse_errors = 0
+-- disable format-on-save from `ziglang/zig.vim`
+vim.g.zig_fmt_autosave = 0
+-- enable  format-on-save from vim.lsp + ZLS
+--
+-- Formatting with ZLS matches `zig fmt`.
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = { "*.zig", "*.zon" },
+	callback = function(ev)
+		vim.lsp.buf.format()
+	end,
+})
+
+vim.lsp.config["zls"] = {
+	-- Set to 'zls' if `zls` is in your PATH
+	cmd = { "/home/bvdeenen/binaries/zig-x86_64-linux-0.16.0-dev.1484+d0ba6642b/zls" },
+	filetypes = { "zig" },
+	root_markers = { "build.zig" },
+	-- There are two ways to set config options:
+	--   - edit your `zls.json` that applies to any editor that uses ZLS
+	--   - set in-editor config options with the `settings` field below.
+	--
+	-- Further information on how to configure ZLS:
+	-- https://zigtools.org/zls/configure/
+	settings = {
+		zls = {
+			-- Whether to enable build-on-save diagnostics
+			--
+			-- Further information about build-on save:
+			-- https://zigtools.org/zls/guides/build-on-save/
+			-- enable_build_on_save = true,
+
+			-- omit the following line if `zig` is in your PATH
+			zig_exe_path = "/home/bvdeenen/binaries/zig-x86_64-linux-0.17.0-dev.657+2faf8debf/zig",
+		},
+	},
+}
+
 vim.lsp.enable("gopls")
 vim.lsp.enable("pyright")
 vim.lsp.enable("bashls")
 vim.lsp.enable("stylua")
+vim.lsp.enable("zls")
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "rs", "gopls", "lua" },
@@ -225,3 +266,25 @@ vim.keymap.set("n", "<leader>h", function()
 	local current = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
 	vim.lsp.inlay_hint.enable(not current, { bufnr = 0 })
 end, { desc = "Toggle inlay hints" })
+
+function PrintDiagnostics(opts, bufnr, line_nr, client_id)
+	bufnr = bufnr or 0
+	line_nr = line_nr or (vim.api.nvim_win_get_cursor(0)[1] - 1)
+	opts = opts or { ["lnum"] = line_nr }
+
+	local line_diagnostics = vim.diagnostic.get(bufnr, opts)
+	if vim.tbl_isempty(line_diagnostics) then
+		return
+	end
+
+	local diagnostic_message = ""
+	for i, diagnostic in ipairs(line_diagnostics) do
+		diagnostic_message = diagnostic_message .. string.format("%d: %s", i, diagnostic.message or "")
+		print(diagnostic_message)
+		if i ~= #line_diagnostics then
+			diagnostic_message = diagnostic_message .. "\n"
+		end
+	end
+	vim.api.nvim_echo({ { diagnostic_message, "Normal" } }, false, {})
+end
+vim.cmd([[ autocmd! CursorHold * lua PrintDiagnostics() ]])

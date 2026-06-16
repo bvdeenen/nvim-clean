@@ -83,6 +83,10 @@
     "vim-tmux-navigator": {
       "rev": "e41c431a0c7b7388ae7ba341f01a0d217eb3a432",
       "src": "https://github.com/christoomey/vim-tmux-navigator"
+    },
+    "zig.vim": {
+      "rev": "29f7a9b8a4e33f936b803de0b713683ad687a6c3",
+      "src": "https://codeberg.org/ziglang/zig.vim"
     }
   }
 }
