@@ -8,6 +8,10 @@
       "rev": "645d108a5242ec7b378cbe643eb6d04d4223f034",
       "src": "https://github.com/stevearc/aerial.nvim"
     },
+    "avante.nvim": {
+      "rev": "dee2402ed0b7c1d3710c0c8eed3d26aa055e118e",
+      "src": "https://github.com/yetone/avante.nvim"
+    },
     "cmp-buffer": {
       "rev": "b74fab3656eea9de20a9b8116afa3cfc4ec09657",
       "src": "https://github.com/hrsh7th/cmp-buffer"

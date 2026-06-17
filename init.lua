@@ -85,6 +85,7 @@ vim.pack.add({
 	gh("hrsh7th/nvim-cmp"),
 	gh("stevearc/conform.nvim"),
 	"https://codeberg.org/ziglang/zig.vim",
+	gh("yetone/avante.nvim"),
 })
 
 -- Ensure all start/ plugins are sourced before require() calls below.
@@ -288,3 +289,20 @@ function PrintDiagnostics(opts, bufnr, line_nr, client_id)
 	vim.api.nvim_echo({ { diagnostic_message, "Normal" } }, false, {})
 end
 vim.cmd([[ autocmd! CursorHold * lua PrintDiagnostics() ]])
+
+require("avante_lib").load()
+
+require("avante").setup({
+  provider = "claude",
+  providers = {
+    claude = {
+      endpoint = "https://api.anthropic.com",
+      model = "claude-sonnet-4-20250514", -- or claude-opus-4-20250514, claude-haiku-4-5-20250107
+      timeout = 30000,
+      extra_request_body = {
+        temperature = 0,
+        max_tokens = 8096,
+      },
+    },
+  },
+})
