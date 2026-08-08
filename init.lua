@@ -194,6 +194,23 @@ vim.lsp.config("gopls", {
 	},
 })
 
+vim.lsp.enable("gopls")
+vim.lsp.enable("pyright")
+vim.lsp.enable("bashls")
+vim.lsp.enable("zls")
+
+vim.lsp.config("pyright", {
+	cmd = { "pyright-langserver", "--stdio" },
+	filetypes = { "python" },
+	root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
+})
+
+vim.lsp.config("bashls", {
+	cmd = { "bash-language-server", "start" },
+	filetypes = { "bash", "sh" },
+	root_markers = { ".git" },
+})
+
 -- don't show parse errors in a separate window
 vim.g.zig_fmt_parse_errors = 0
 -- disable format-on-save from `ziglang/zig.vim`
@@ -232,12 +249,6 @@ vim.lsp.config["zls"] = {
 		},
 	},
 }
-
-vim.lsp.enable("gopls")
-vim.lsp.enable("pyright")
-vim.lsp.enable("bashls")
-vim.lsp.enable("stylua")
-vim.lsp.enable("zls")
 
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "rs", "gopls", "lua" },
