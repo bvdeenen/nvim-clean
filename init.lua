@@ -39,6 +39,21 @@ vim.o.cursorline = true
 vim.o.scrolloff = 10
 vim.o.confirm = true
 
+-- [[ Statusline ]]
+function StatuslineLsp()
+	local clients = vim.lsp.get_clients({ bufnr = 0 })
+	if #clients == 0 then
+		return ""
+	end
+	local names = {}
+	for _, client in ipairs(clients) do
+		table.insert(names, client.name)
+	end
+	return "[" .. table.concat(names, ",") .. "]"
+end
+
+vim.o.statusline = "%f %h%w%m%r %= %{v:lua.StatuslineLsp()} %-14.(%l,%c%V%) %P"
+
 -- [[ Basic Keymaps ]]
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
