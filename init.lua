@@ -304,16 +304,16 @@ vim.cmd([[ autocmd! CursorHold * lua PrintDiagnostics() ]])
 require("avante_lib").load()
 
 require("avante").setup({
-  provider = "claude",
-  providers = {
-    claude = {
-      endpoint = "https://api.anthropic.com",
-      model = "claude-sonnet-4-20250514", -- or claude-opus-4-20250514, claude-haiku-4-5-20250107
-      timeout = 30000,
-      extra_request_body = {
-        temperature = 0,
-        max_tokens = 8096,
-      },
-    },
-  },
+	provider = "claude",
+	providers = {
+		claude = {
+			endpoint = "https://api.anthropic.com",
+			model = "claude-sonnet-4-20250514", -- or claude-opus-4-20250514, claude-haiku-4-5-20250107
+			timeout = 30000,
+			extra_request_body = {
+				temperature = 0,
+				max_tokens = 8096,
+			},
+		},
+	},
 })
