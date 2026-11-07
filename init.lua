@@ -100,7 +100,6 @@ vim.pack.add({
 	gh("hrsh7th/nvim-cmp"),
 	gh("stevearc/conform.nvim"),
 	"https://codeberg.org/ziglang/zig.vim",
-	gh("yetone/avante.nvim"),
 })
 
 -- Ensure all start/ plugins are sourced before require() calls below.
@@ -218,7 +217,15 @@ vim.lsp.enable("lua_ls")
 vim.lsp.config("pyright", {
 	cmd = { "pyright-langserver", "--stdio" },
 	filetypes = { "python" },
-	root_markers = { "pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "pyrightconfig.json", ".git" },
+	root_markers = {
+		"pyproject.toml",
+		"setup.py",
+		"setup.cfg",
+		"requirements.txt",
+		"Pipfile",
+		"pyrightconfig.json",
+		".git",
+	},
 })
 
 vim.lsp.config("lua_ls", {
@@ -312,41 +319,7 @@ vim.keymap.set("n", "<leader>h", function()
 	vim.lsp.inlay_hint.enable(not current, { bufnr = 0 })
 end, { desc = "Toggle inlay hints" })
 
-function PrintDiagnostics(opts, bufnr, line_nr, client_id)
-	bufnr = bufnr or 0
-	line_nr = line_nr or (vim.api.nvim_win_get_cursor(0)[1] - 1)
-	opts = opts or { ["lnum"] = line_nr }
-
-	local line_diagnostics = vim.diagnostic.get(bufnr, opts)
-	if vim.tbl_isempty(line_diagnostics) then
-		return
-	end
-
-	local diagnostic_message = ""
-	for i, diagnostic in ipairs(line_diagnostics) do
-		diagnostic_message = diagnostic_message .. string.format("%d: %s", i, diagnostic.message or "")
-		print(diagnostic_message)
-		if i ~= #line_diagnostics then
-			diagnostic_message = diagnostic_message .. "\n"
-		end
-	end
-	vim.api.nvim_echo({ { diagnostic_message, "Normal" } }, false, {})
-end
-vim.cmd([[ autocmd! CursorHold * lua PrintDiagnostics() ]])
-
-require("avante_lib").load()
-
-require("avante").setup({
-	provider = "claude",
-	providers = {
-		claude = {
-			endpoint = "https://api.anthropic.com",
-			model = "claude-sonnet-4-20250514", -- or claude-opus-4-20250514, claude-haiku-4-5-20250107
-			timeout = 30000,
-			extra_request_body = {
-				temperature = 0,
-				max_tokens = 8096,
-			},
-		},
-	},
+vim.diagnostic.config({
+	virtual_text = true,
+	signs = true,
 })
